@@ -1,6 +1,8 @@
 import 'package:anim_pizza/bloc/pizza_bloc.dart';
+import 'package:anim_pizza/models/pizza_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:math';
 
 void main() {
   runApp(const MyApp());
@@ -17,11 +19,11 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-        title: 'Les Pizzas PoP',
+        title: 'Pizzas PoP',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.orange,
         ),
-        home: const MyHomePage(title: ''),
+        home: const MyHomePage(title: 'Pizzas PoP'),
       ),
     );
   }
@@ -42,7 +44,90 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: const Center(),
+      body: Center(
+        child: BlocBuilder<PizzaBloc, PizzaState>(builder: (context, state) {
+          if (state is PizzaInitial) {
+            return const CircularProgressIndicator(
+              color: Colors.orange,
+            );
+          }
+          if (state is PizzaLoaded) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '${state.pizzas.length}',
+                  style: const TextStyle(
+                    fontSize: 60,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 1.5,
+                  width: MediaQuery.of(context).size.width,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      for (int i = 0; i < state.pizzas.length; i++)
+                        Positioned(
+                          left: Random().nextInt(250).toDouble(),
+                          top: Random().nextInt(400).toDouble(),
+                          child: SizedBox(
+                            height: 150,
+                            width: 150,
+                            child: state.pizzas[i].image,
+                          ),
+                        )
+                    ],
+                  ),
+                )
+              ],
+            );
+          } else {
+            return const Text('Zut ... C\'est la sauce...');
+          }
+        }),
+      ),
+      floatingActionButton:
+          Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FloatingActionButton(
+            child: const Icon(Icons.local_pizza_outlined),
+            backgroundColor: Colors.orange,
+            onPressed: () {
+              context.read<PizzaBloc>().add(AddPizza(Pizza.pizzas[0]));
+            }),
+        const SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton(
+            child: const Icon(Icons.remove),
+            backgroundColor: Colors.orange,
+            onPressed: () {
+              context.read<PizzaBloc>().add(RemovePizza(Pizza.pizzas[0]));
+            }),
+        const SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton(
+            child: const Icon(Icons.local_pizza_outlined),
+            backgroundColor: Colors.orange[300],
+            onPressed: () {
+              context.read<PizzaBloc>().add(AddPizza(Pizza.pizzas[1]));
+            }),
+        const SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton(
+            child: const Icon(Icons.remove),
+            backgroundColor: Colors.orange[300],
+            onPressed: () {
+              context.read<PizzaBloc>().add(RemovePizza(Pizza.pizzas[1]));
+            }),
+      ]),
     );
   }
 }
