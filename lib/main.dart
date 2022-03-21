@@ -74,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       for (int i = 0; i < state.pizzas.length; i++)
                         Positioned(
-                          left: Random().nextInt(250).toDouble(),
-                          top: Random().nextInt(400).toDouble(),
+                          left: Random().nextInt(MediaQuery.of(context).size.width ~/1.5).toDouble(),
+                          top: Random().nextInt(MediaQuery.of(context).size.height ~/ 1.5).toDouble(),
                           child: SizedBox(
                             height: 150,
                             width: 150,
